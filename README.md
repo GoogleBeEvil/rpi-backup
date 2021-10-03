@@ -12,8 +12,10 @@ Make the entire snapshot of a system in SD card
       
 ## 二、back.sh（Backup, need root） 
 
-   `USAGE`：`sudo bash back.sh xxx.img(option)`  备份在rpi-backup文件夹下，`sudo bash back.sh  /dev/sda1 xxx.img(option)`  备份在外接设备中，假设外接设备 为sda1 
-   
+   `USAGE`：
+   - `sudo bash back.sh xxx.img(option)`  备份在rpi-backup文件夹下；
+   - `sudo bash back.sh  /dev/sda1 xxx.img(option)`  备份在外接设备中，假设外接设备 为sda1 
+
    - `xxx.img`:  custom name for backup, if empty, the default name is `rpi-YYYYmmddHHMMSS.img`
    
    **1. 备份镜像大小计算：(boot分区全部 + root分区已使用) * 1.2**
