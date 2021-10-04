@@ -14,10 +14,10 @@ Make the entire snapshot of a system in SD card
 
    `USAGE`：
    - `git clone https://github.com/GoogleBeEvil/rpi-backup.git && cd rpi-backup`  下载文件到本地；
-   - `sudo bash back.sh xxx.img(option)`  备份在rpi-backup文件夹下；
+   - `sudo bash backup.sh xxx.img(option)`  备份在rpi-backup文件夹下；
    - `xxx.img`:  custom name for backup, if empty, the default name is `rpi-YYYYmmddHHMMSS.img`
    
-   **1. 备份镜像大小计算：(boot分区全部 + root分区已使用) * 1.2**
+   **1. 备份镜像大小计算：(boot分区全部 + root分区已使用) * 1.3**
    
    **2. 如果sd卡剩余空间充足，可以备份到卡内，如果剩余空间有限，请备份到外部设备**
    
