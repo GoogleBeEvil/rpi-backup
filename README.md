@@ -13,7 +13,7 @@ Make the entire snapshot of a system in SD card
 ## 二、back.sh（Backup, need root） 
 
    `USAGE`：
-     - `git clone https://github.com/GoogleBeEvil/rpi-backup.git && cd rpi-backup`  下载文件到本地；
+   - `git clone https://github.com/GoogleBeEvil/rpi-backup.git && cd rpi-backup`  下载文件到本地；
    - `sudo bash back.sh xxx.img(option)`  备份在rpi-backup文件夹下；
    - `xxx.img`:  custom name for backup, if empty, the default name is `rpi-YYYYmmddHHMMSS.img`
    
