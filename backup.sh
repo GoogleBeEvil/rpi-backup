@@ -28,7 +28,7 @@ root_type=`echo $root_info | awk '{print $2}'`
 
 dr=`echo $root_info | awk '{print $4}'`
 db=`df -P | grep /dev/mmcblk0p1 | awk '{print $2}'`
-ds=`echo $dr $db |awk '{print int(($1+$2)*1.3)}'`
+ds=`echo $dr $db |awk '{print int(($1+$2)*1.2)}'`
 
 echo "create $file ..."
 
