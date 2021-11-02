@@ -6,16 +6,14 @@ Make the entire snapshot of a system in SD card
 
 ## 一、近期系统测试 (Recently Tests)
    
-   - [x] ubuntu-20.04-preinstalled-server-arm64
-   
-   - [ ] ubuntu-18.04-desktop-arm64
-      
+   - [x] 2021-05-07-raspios-buster-arm64-lite https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2021-05-28/
+         
 ## 二、back.sh（Backup, need root） 
 
    `USAGE`：
    - `git clone https://github.com/GoogleBeEvil/rpi-backup.git && cd rpi-backup`  下载文件到本地；
    - `sudo bash backup.sh xxx.img(option)`  备份在rpi-backup文件夹下；
-   - `xxx.img`:  custom name for backup, if empty, the default name is `rpi-YYYYmmddHHMMSS.img`
+   - `xxx.img`:  custom name for backup, if empty, the default name is `rpi-YYYY-mm-dd-HH-MM-SS.img`
    
    **1. 备份镜像大小计算：(boot分区全部 + root分区已使用) * 1.3**
    
