@@ -1,52 +1,47 @@
 #!/bin/bash
-
 if [ `whoami` != "root" ];then
     echo "This script must be run as root!"
     exit 1
 fi
 
 # install software
-apt update
-apt install -y dosfstools parted kpartx rsync
-apt clean
+apt update && apt install -y dosfstools parted kpartx rsync && apt clean
 
 echo ""
 echo "software is ready"
 
-file="rpi-`date +%Y%m%d%H%M%S`.img"
+file="rpi-`date +%Y-%m-%d-%H-%M-%S`.img"
 
 if [ "x$1" != "x" ];then
     file="$1"
 fi
-
 # boot mount point
-boot_mnt=`findmnt -n /dev/mmcblk0p1 | awk '{print $1}'`
+boot_mnt=`findmnt -n /boot | awk '{print $1}'`
 
 root_info=`df -PT / | tail -n 1`
 
 root_type=`echo $root_info | awk '{print $2}'`
 
 dr=`echo $root_info | awk '{print $4}'`
-db=`df -P | grep /dev/mmcblk0p1 | awk '{print $2}'`
-ds=`echo $dr $db |awk '{print int(($1+$2)*1.2)}'`
+db=`df -P | grep /boot | awk '{print $2}'`
+ds=`echo $dr $db |awk '{print int(($1+$2)*1.3)}'`
 
 echo "create $file ..."
 
 dd if=/dev/zero of=$file bs=1K count=0 seek=$ds
 #truncate -s ${ds}k $file
 
-start=`fdisk -l /dev/mmcblk0| awk 'NR==9 {print $2}'`
-end=`fdisk -l /dev/mmcblk0| awk 'NR==9 {print $3}'`
+start=`fdisk -l $(df /boot | grep ' /boot$\| /$' | cut -d' ' -f1 | sed 's/[0-9]*$//g' | sed 's/p[0-9]*$//g')|tail -2| awk 'NR==1 {print $2}'`
+end=`fdisk -l $(df /boot | grep ' /boot$\| /$' | cut -d' ' -f1 | sed 's/[0-9]*$//g' | sed 's/p[0-9]*$//g')|tail -2| awk 'NR==1 {print $3}'`
 
 if [ "$start" == "*" ];then
-    start=`fdisk -l /dev/mmcblk0| awk 'NR==9 {print $3}'`
-    end=`fdisk -l /dev/mmcblk0| awk 'NR==9 {print $4}'`
+    start=`fdisk -l $(df /boot | grep ' /boot$\| /$' | cut -d' ' -f1 | sed 's/[0-9]*$//g' | sed 's/p[0-9]*$//g')|tail -2| awk 'NR==1 {print $3}'`
+    end=`fdisk -l $(df /boot | grep ' /boot$\| /$' | cut -d' ' -f1 | sed 's/[0-9]*$//g' | sed 's/p[0-9]*$//g')|tail -2| awk 'NR==1 {print $4}'`
 fi
 
 start=`echo $start's'`
 end=`echo $end's'`
-
-end2=`fdisk -l /dev/mmcblk0| awk 'NR==10 {print $2}'`
+end2=`fdisk -l $(df /boot | grep ' /boot$\| /$' | cut -d' ' -f1 | sed 's/[0-9]*$//g' | sed 's/p[0-9]*$//g')|tail -2| awk 'NR==2 {print $2}'`
 end2=`echo $end2's'`
 
 echo "start=$start"
@@ -69,16 +64,21 @@ partRoot="${device}p2"
 echo "partBoot=$partBoot"
 echo "partRoot=$partRoot"
 
-sleep 5s
-
-opartuuidb=`blkid -o export /dev/mmcblk0p1 | grep PARTUUID`
-opartuuidr=`blkid -o export /dev/mmcblk0p2 | grep PARTUUID`
+sleep 3s
+devp1=`fdisk -l $(df /boot | grep ' /boot$\| /$' | cut -d' ' -f1 | sed 's/[0-9]*$//g' | sed 's/p[0-9]*$//g')|tail -2| awk 'NR==1 {print $1}'`
+devp2=`fdisk -l $(df /boot | grep ' /boot$\| /$' | cut -d' ' -f1 | sed 's/[0-9]*$//g' | sed 's/p[0-9]*$//g')|tail -2| awk 'NR==2 {print $1}'`
+opartuuidb=`blkid -o export $devp1 | grep PARTUUID`
+opartuuidr=`blkid -o export $devp2 | grep PARTUUID`
+echo "opartuuidb=$opartuuidb"
 
 npartuuidb=`blkid -o export ${partBoot} | grep PARTUUID`
 npartuuidr=`blkid -o export ${partRoot} | grep PARTUUID`
 
-boot_label=`dosfslabel /dev/mmcblk0p1 | tail -n 1`
-root_label=`e2label /dev/mmcblk0p2 | tail -n 1`
+boot_label=`dosfslabel $devp1 | tail -n 1`
+root_label=`e2label $devp2 | tail -n 1`
+echo "boot_label=$boot_label"
+echo "root_label=$root_label"
+
 
 mkfs.vfat -F 32 -n "$boot_label" $partBoot
 echo "$partBoot format success"
@@ -161,5 +161,3 @@ umount /mnt
 
 kpartx -d $loopdevice
 losetup -d $loopdevice
-
-
